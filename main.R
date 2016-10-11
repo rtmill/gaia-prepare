@@ -1,4 +1,5 @@
-  # TODO: Description
+# Currently holds all functions for prepare portion of gaia
+  # includes: data preparation, cdm manipulation & geocoding functions
 
 # Change directory when calling source()
 # e.g. source("path/main.R", chdir=T)
@@ -21,6 +22,7 @@ Sys.sleep(3)
 
 cat("Loading configuration file...\n")
 
+# Assumes you have properly set the values inside of the config file
 config = yaml.load_file("config.yml")
 
 
