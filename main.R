@@ -25,8 +25,7 @@ config = yaml.load_file("config.yml")
 
 
 
-
-
+# Open connection to db
 
 connectToDb <- function(){
   cat("Establishing connection...\n")
@@ -56,7 +55,7 @@ connectToDb <- function(){
 }
 
 
-
+# Compare original table with temporary altered version
 compare <- function(locs, original){
   if( exists("locs")){
     
@@ -119,7 +118,7 @@ compare <- function(locs, original){
 
 
 
-
+# Shows available functions
 getHelp <- function(){
   cat("Enter your database connection settings in 'config.yml' prior to using this script\n\n")
   
@@ -146,7 +145,7 @@ getHelp <- function(){
   cat("\n")
 }
 
-
+# Cleans up zip code data
 cleanZip <- function(locs){
   if (exists("locs")){
     locs$zip <- clean.zipcodes(locs$zip)
@@ -157,7 +156,8 @@ cleanZip <- function(locs){
   return(locs)
 }
 
-
+# Fills in missing zip codes by matching with zip code data set
+  # matches with state/city
 matchZip <- function(locs){
   
   
@@ -186,7 +186,7 @@ matchZip <- function(locs){
   return(locs)
 }
   
-
+# Adds coordinate columns to cdm location table (lat, lon)
 addColumns <- function(locs){
   
   if (exists("locs")){
@@ -213,13 +213,15 @@ addColumns <- function(locs){
   
 }
   
+# Resets altered table back to original. Erases any changes made
+  #  ( does not erase submitted changes )
 resetChanges <- function(original){
   locs <<- origCopy
   original <<- origCopy
   cat("Reverted to original")
 }
 
-
+# Geocode using data science toolkit
 geocode_dstk <- function(x){
   if (exists("locs")){
     
@@ -264,7 +266,7 @@ geocode_dstk <- function(x){
   return(x)
 }
 
-
+# Geocode using census api
 geocode_census <- function(x){
   
   # Make sure input is data
@@ -377,7 +379,7 @@ geocode_census <- function(x){
   return(x)
 }
 
-
+# Geocode using google api
 geocode_google <- function(locs){
   
   if (exists("locs")){
@@ -433,10 +435,12 @@ geocode_google <- function(locs){
   return(locs)
 }
 
+# Display head of table
 showHead <- function(x){
   print(head(x))
 }
 
+# Commit changes to database
 commitChanges <- function(x){
   commitInput <- readline(prompt="Are you sure you want to commit changes?(yes/no)")
   if (commitInput == "no"){
@@ -463,13 +467,13 @@ commitChanges <- function(x){
 }
 
 
-
+# Display rows that failed to be geocoded. Helpful for messy data analysis
 lacking <- function(x){
   y <- x[is.na(x$latitude) | x$latitude =="",]
   print( y[1:min(10, nrow(y)),])
 }
 
-
+# function to perform suggested ordered of data preparation and geocoding apis
 fullService <- function(x){
   
   locs <<- matchZip(locs)
@@ -481,7 +485,8 @@ fullService <- function(x){
   compare(locs, original)
 }
 
-
+# TODO: Remove this? R doesn't like the potential for an endless loop
+# function to make the code run as an interactive command line application 
 getInput <- function(){
   input <- readline()
   
